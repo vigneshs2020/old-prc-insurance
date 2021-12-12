@@ -1,0 +1,11 @@
+db:
+ host: "sys-insurance-provider-api-v1.us-e2.cloudhub.io"
+ port: "80"
+ 
+sysapi:
+ companyinfo:
+  host: "sys-companyinfo-postgres-api-v1.us-e2.cloudhub.io"
+  port: "80"
+ salesforce:
+  host: "sys-companyinfo-salesforce-api-v1.us-e2.cloudhub.io"
+  port: "80"

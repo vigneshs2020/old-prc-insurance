@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:sys-company-info-postgres-api-v1="http://www.mulesoft.org/schema/mule/sys-company-info-postgres-api-v1"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/sys-company-info-postgres-api-v1 http://www.mulesoft.org/schema/mule/sys-company-info-postgres-api-v1/current/mule-sys-company-info-postgres-api-v1.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	
+	
+	
+	<sub-flow name="ResponseAccumulationFlow" doc:id="b79447df-d24c-485e-89d5-a91a8af11eb1" >
+		<foreach doc:name="For Each" doc:id="af52e500-a44c-4e2d-96d2-19d230269ca1" collection="#[vars.insurersList]">
+			<scatter-gather doc:name="Scatter-Gather" doc:id="de611c80-ea3c-4d2b-aede-12e4498f7279">
+				<route>
+					<try doc:name="Try" doc:id="24000048-c54f-42bd-aaf1-c599111d3394">
+						<http:request method="GET" doc:name="SysInsuranceProvider" doc:id="fbffcda9-9811-4f06-80cf-b48291f6e027" config-ref="HTTP_Request_configuration_database" path="/insurer" target="result">
+							<http:query-params><![CDATA[#[output application/java
+var i = vars.counter -1
+---
+{
+	"insurerName" : vars.insurersList[i]
+}]]]></http:query-params>
+						</http:request>
+						<error-handler>
+							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="036cc95d-bc6a-43f9-918d-78340e6172da" type="ANY">
+								<logger level="ERROR" doc:name="Logger" doc:id="a5324888-fd00-4987-8485-8b9a4432c3f8" message="#[error.description]" />
+							</on-error-continue>
+						</error-handler>
+					</try>
+					<ee:transform doc:name="insurerResponse" doc:id="b7320a0d-e0a1-44a5-87d3-06b0182061a0">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+						</ee:message>
+						<ee:variables>
+							<ee:set-variable variableName="acc"><![CDATA[%dw 2.0
+output application/java
+---
+vars.acc + vars.result
+]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+					<logger level="INFO" doc:name="insurerResponse" doc:id="e48f2a6f-fa88-41e4-90c5-8912031c5401" message="#[vars.acc]" />
+				</route>
+				<route>
+					<logger level="INFO" doc:name="Logger" doc:id="76fae343-6509-40cd-b134-98e0c21ab813" />
+				</route>
+			</scatter-gather>
+		</foreach>
+	</sub-flow>
+	<flow name="getCompanyInfoFlow" doc:id="8a20319f-3014-4a73-9a0d-3cc5a541cc78" >
+		<choice doc:name="Choice" doc:id="a55b01d4-ae51-4522-8b15-d129fb03877f" >
+			<when expression='#[sizeOf(attributes.queryParams.id) ==1 and attributes.queryParams.id &lt; 10]'>
+				<http:request method="GET" doc:name="companyInfoPostgresRequest" doc:id="c3468660-703f-4833-bc36-2d68a51c974e" config-ref="HTTP_Request_configuration_companyInfo" path="/api/postgres/select">
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	"id" : attributes.queryParams.id
+}]]]></http:query-params>
+		</http:request>
+			</when>
+			<when expression='#[sizeOf(attributes.queryParams.id) ==2 and attributes.queryParams.id &lt; 17]'>
+				<http:request method="GET" doc:name="companyInfoSalesforceRequest" doc:id="872a99af-295a-4295-9cf3-6bf1a837c4c9" config-ref="HTTP_Request_configuration_salesforce" path="/api/salesforce/retrieve">
+					<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"id" : attributes.queryParams.id
+}]]]></http:query-params>
+				</http:request>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="26d34def-e8b7-4348-b4f5-3b3c318a99b1" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Enter Valid ID"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+	<sub-flow name="callPostgresqlFlow" doc:id="801ed9c7-fd84-4a72-89ba-35c99928807c" >
+		<set-variable value="#[attributes.queryParams.id]" doc:name="Set Variable" doc:id="da509165-71a7-4a1e-afbf-ae67643b42df" variableName="id" />
+		<http:request method="GET" doc:name="companyInfoPostgresRequest" doc:id="779a0119-14df-4c6b-93e4-1069d9056d0e" config-ref="HTTP_Request_configuration_companyInfo" path="/api/postgres/select">
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	"id" : attributes.queryParams.id
+}]]]></http:query-params>
+		</http:request>
+		<validation:is-false doc:name="Is false" doc:id="b96c699a-f400-4a56-8bc2-6ce15e6066b5" expression="#[isEmpty(payload[0].InsurersList)]" message='"InsurersList Empty!"' />
+		<set-variable value="#[payload[0].InsurersList]" doc:name="insurersList" doc:id="8999b6f4-a67a-4ad5-84d2-edf2d1349b8f" variableName="insurersList" />
+		<ee:transform doc:name="insurerResponse" doc:id="496ba144-ba5a-455f-a98c-47804a8825bf">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="acc"><![CDATA[%dw 2.0
+output application/java
+---
+[]]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="ResponseAccumulationFlow Reference" doc:id="e73e231d-679e-4757-86f2-442bb632d808" name="ResponseAccumulationFlow" />
+		<ee:transform doc:name="insurerResponse" doc:id="f52e0aa4-b4ec-47c9-b760-114cbbe05149">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+vars.acc]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="updatecompanyInfoRequest" doc:id="34e7da7f-ca06-42dc-8cc0-11694355e1ea" config-ref="HTTP_Request_configuration_companyInfo" path="/api/postgres/update">
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	"id" : vars.id
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="insurerResponse" doc:id="82a869a1-ecab-4355-bb92-751aeb064484" message="#[payload]" />
+	</sub-flow>
+	<flow name="postCompanyInfoFlow" doc:id="a5a1c9f5-9c43-43cc-9658-fe811c70acb6" >
+		<choice doc:name="Choice" doc:id="0975691f-a429-4986-a465-94cad0fa871d" >
+			<when expression='#[sizeOf(attributes.queryParams.id) ==2 and attributes.queryParams.id &lt; 17]'>
+				<flow-ref doc:name="callSalesforceFlow" doc:id="7ccb2840-8c5b-4bd9-99d8-301ec7c38237" name="callSalesforceFlow" />
+			</when>
+			<when expression='#[sizeOf(attributes.queryParams.id) ==1 and attributes.queryParams.id &lt; 10]'>
+				<flow-ref doc:name="callPostgresqlFlow" doc:id="5577ee56-cf16-4384-b5e8-88990745f057" name="callPostgresqlFlow"/>
+			</when>
+			<otherwise>
+				<ee:transform doc:name="Transform Message" doc:id="62fbb7c4-b889-4720-890c-ac5f34c42980" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Enter Valid ID"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+	<sub-flow name="callSalesforceFlow" doc:id="7385e686-a4b4-490e-9ac6-583455ff7b01" >
+		<set-variable value="#[attributes.queryParams.id]" doc:name="Set Variable" doc:id="83784afd-8bc8-4bcc-a02f-767e830e8621" variableName="id" />
+		<http:request method="GET" doc:name="Request" doc:id="e55aff21-a28a-4931-bdfa-d26341cbc36d" config-ref="HTTP_Request_configuration_salesforce" path="/api/salesforce/retrieve">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"id" : attributes.queryParams.id
+}]]]></http:query-params>
+		</http:request>
+		<validation:is-false doc:name="Is false" doc:id="aa1f8f65-7bd9-48b6-852f-c1d0026f1286" expression="#[isEmpty(payload[0].InsurersList__c)]" message='"InsurersList Empty!"' />
+		<set-variable value="#[%dw 2.0&#10;output application/json --- [payload[0].InsurersList__c]]" doc:name="insurersList" doc:id="21ef1c01-b71c-43c8-aebf-9fd830b69022" variableName="insurersList" />
+		<ee:transform doc:name="insurerResponse" doc:id="dac7ac8c-8f7c-4c38-b1ca-9be658be3c98" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[
+payload[0].InsurersList__c
+]]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="acc" ><![CDATA[%dw 2.0
+output application/java
+---
+[]]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="ResponseAccumulationFlow Reference" doc:id="b78bcf65-cc56-43c6-91cb-f9090266731c" name="ResponseAccumulationFlow" />
+		<ee:transform doc:name="insurerResponse" doc:id="5f0e1da8-248b-42b1-bb8e-f1fb6ce9e375" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"insurance": write(vars.acc,"application/json")
+ }]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="RequestSalesforce" doc:id="9e83f80f-614f-4e6c-89df-1589694e5116" config-ref="HTTP_Request_configuration_salesforce" path="/api/salesforce/update">
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	"id" : vars.id
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="insurerResponse" doc:id="f8903de7-10bf-48bc-afd6-ae387f9804ee" message="#[payload]" />
+	</sub-flow>
+</mule>

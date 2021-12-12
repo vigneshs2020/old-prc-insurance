@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_b79447df_d24c_485e_89d5_a91a8af11eb1_Input_Variables_insurersList = Any
+

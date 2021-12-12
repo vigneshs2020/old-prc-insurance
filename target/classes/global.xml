@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<http:request-config name="HTTP_Request_configuration_salesforce" doc:name="HTTP Request configuration" doc:id="4179101a-bc76-4612-9872-9b3b15466424" >
+		<http:request-connection host="${sysapi.salesforce.host}" port="${sysapi.salesforce.port}" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_database" doc:name="HTTP Request configuration" doc:id="f061f5eb-cd7a-459a-a4d4-788b3f51415b" basePath="/api">
+		<http:request-connection host="${db.host}" port="${db.port}" />
+	</http:request-config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="603db7f6-5944-4b2c-8e42-a0dc69b453a7" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+		
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration_companyInfo" doc:name="HTTP Request configuration" doc:id="6371f311-4190-4db5-bea5-78e8bd116f1e" >
+		<http:request-connection host="${sysapi.companyinfo.host}" port="${sysapi.companyinfo.port}" />
+	</http:request-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="5e38abb8-0cff-4864-b745-4dba55fcc288" file="config\dev-config.yaml" />
+	<configuration doc:name="Configuration" doc:id="8906c4f0-23f8-4228-ab2a-2c052b3d66e9" defaultErrorHandler-ref="globalError_Handler" />
+</mule>

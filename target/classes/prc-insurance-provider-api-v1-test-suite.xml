@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="sys-companyinfo-postgres-api-v1-test-suite.xml" />
+	<munit:test name="sys-companyinfo-postgres-api-v1-test-suite-sys-companyinfo-postgres-api-v1-mainTest" doc:id="1c24b758-ff5c-4167-be19-4f1141878b64" description="Test" expectedErrorType="APIKIT:BAD_REQUEST">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="c8ec7cf1-4252-4e49-9ac8-f039fb5ef03e" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="prc-insurance-provider-api-v1-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sys-insurance-quotation-hub-api-v1-main" doc:id="db396f86-fca8-4b16-9ee9-b57a92d91ff2" name="prc-insurance-provider-api-v1-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="2017e6e7-e6f4-4132-9f12-ee774baee972" actual="#[vars.httpStatus]" expected="400"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sys-companyinfo-postgres-api-v1-test-suite-sys-companyinfo-postgres-api-v1-mainTest1" doc:id="50ced25a-d083-4dfc-902d-10fbbf560e5f" description="Test" expectedErrorType="APIKIT:NOT_FOUND">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="01c9c4b6-0238-4f00-93ce-ce020cfc1e49" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="prc-insurance-provider-api-v1-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sys-insurance-quotation-hub-api-v1-main" doc:id="e682392a-9e28-4474-a171-79762dafe751" name="prc-insurance-provider-api-v1-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="1cefb3d4-6130-4dea-8546-f30362dc9d6b" actual="#[vars.httpStatus]" expected="404"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sys-companyinfo-postgres-api-v1-test-suite-sys-companyinfo-postgres-api-v1-mainTest2" doc:id="2b422bb9-5adf-4a2b-ac57-6b5143e64ab2" description="Test" expectedErrorType="APIKIT:METHOD_NOT_ALLOWED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="aaafc8ff-ac53-40fa-835d-23d32f593b7d" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="prc-insurance-provider-api-v1-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sys-insurance-quotation-hub-api-v1-main" doc:id="2c575872-8705-4e8d-8ebc-2f89fa8947a6" name="prc-insurance-provider-api-v1-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="b42c7985-e817-4704-8b80-b0980f986912" actual="#[vars.httpStatus]" expected="405"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sys-companyinfo-postgres-api-v1-test-suite-sys-companyinfo-postgres-api-v1-mainTest3" doc:id="e2ab19e3-5865-4204-8e1d-caf20021a621" description="Test" expectedErrorType="APIKIT:NOT_ACCEPTABLE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="2d2d7fdf-d8ad-44bb-a01b-c796d874f6dc" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="prc-insurance-provider-api-v1-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sys-insurance-quotation-hub-api-v1-main" doc:id="34bf44e2-faf6-4089-a890-58071048ff6d" name="prc-insurance-provider-api-v1-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="33585b6e-6ac1-4d26-8df5-95b01f02bb2e" actual="#[vars.httpStatus]" expected="406"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sys-companyinfo-postgres-api-v1-test-suite-sys-companyinfo-postgres-api-v1-mainTest4" doc:id="f885d577-0a77-46d9-b584-651206b7b71f" description="Test" expectedErrorType="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="f031715b-b8c1-49cf-9da9-36736b4ae931" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="prc-insurance-provider-api-v1-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sys-insurance-quotation-hub-api-v1-main" doc:id="428a41b8-d356-442c-b8ae-3c20ebecc286" name="prc-insurance-provider-api-v1-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="4866800b-fdf8-41d2-826e-ec91d6bde26b" actual="#[vars.httpStatus]" expected="415"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sys-companyinfo-postgres-api-v1-test-suite-sys-companyinfo-postgres-api-v1-mainTest5" doc:id="b2e1aec1-69c9-405b-b9fc-fed5c3714190" description="Test" expectedErrorType="APIKIT:NOT_IMPLEMENTED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="2f3d3d0d-2213-4519-ba64-022e665bd4b5" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="prc-insurance-provider-api-v1-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sys-insurance-quotation-hub-api-v1-main" doc:id="638307a0-deb4-44b7-9cdd-5405e370b8a5" name="prc-insurance-provider-api-v1-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="c30f28dc-2603-4365-b25f-d86907cf54fe" actual="#[vars.httpStatus]" expected="501"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sys-companyinfo-postgres-api-v1-test-suite-sys-companyinfo-postgres-api-v1-consoleTest" doc:id="8f351751-a187-4cf0-bfbe-9b014b17ce85" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="f5660a9b-b9e4-432b-9205-6eb87576e218" processor="apikit:console">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="prc-insurance-provider-api-v1-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to sys-companyinfo-postgres-api-v1-console" doc:id="c5a30021-5ea5-4799-9150-886bc4267e7d" name="prc-insurance-provider-api-v1-console"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call" doc:id="b843268e-2513-4bcc-b9ab-8409b8e4997e" processor="apikit:console" atLeast="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="prc-insurance-provider-api-v1-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
