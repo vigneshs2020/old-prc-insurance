@@ -200,4 +200,7 @@ output application/json
 		</http:request>
 		<logger level="INFO" doc:name="insurerResponse" doc:id="f8903de7-10bf-48bc-afd6-ae387f9804ee" message="#[payload]" />
 	</sub-flow>
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+=======
+>>>>>>> branch 'master' of https://github.com/vigneshs2020/old-prc-insurance.git
 </mule>

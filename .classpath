@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="con" path="org.mule.tooling.API_SPEC_LIB/827644ae-bad1-4ad6-a212-0e26e7c3de0a/prc-insurance-provider-api-v1/1.0.1"/>
 	<classpathentry kind="con" path="MULE_LIB/827644ae-bad1-4ad6-a212-0e26e7c3de0a/mule-plugin-sys-companyinfo-postgres-api-v1/1.0.0"/>
 	<classpathentry kind="con" path="MULE_LIB/org.mule.connectors/mule-http-connector/1.5.23"/>
 	<classpathentry kind="con" path="MULE_LIB/org.mule.connectors/mule-sockets-connector/1.1.5"/>
