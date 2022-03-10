@@ -200,4 +200,7 @@ output application/json
 		</http:request>
 		<logger level="INFO" doc:name="insurerResponse" doc:id="f8903de7-10bf-48bc-afd6-ae387f9804ee" message="#[payload]" />
 	</sub-flow>
+	<flow name="implementationFlow" doc:id="f688790e-0091-47ea-a15d-0a5235c2b62b" >
+		<logger level="INFO" doc:name="Logger" doc:id="c24ffda5-612c-4be0-b055-bd5daaa10210" />
+	</flow>
 </mule>
